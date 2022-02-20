@@ -115,7 +115,8 @@ public class EnvelopeManagerWindow extends JFrame {
     JTabbedPane tabbedPane = new JTabbedPane();
 
     tabbedPane.add("Uncleared Transactions", new JScrollPane(table));
-    tabbedPane.add("Envelopes Report", envelopesReportTab);
+//    Temporarily disable for 1.0 release.
+//    tabbedPane.add("Envelopes Report", envelopesReportTab);
 
     panel.add(tabbedPane, BorderLayout.CENTER);
 
