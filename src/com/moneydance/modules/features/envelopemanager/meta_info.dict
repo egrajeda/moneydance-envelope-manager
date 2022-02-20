@@ -1,0 +1,9 @@
+{
+  "vendor" = "Eduardo Grajeda"
+  "module_build" = "1"
+  "minbuild" = "1000"
+  "vendor.url" = "https://egrajeda.com"
+  "module_name" = "Envelope Manager"
+  "module_desc" = "<html><body><title>Envelope Manager</title><p>Provides assistance to easily manage your envelopes and move money from/to them.</p></body></html>"
+  "desc" = "Provides assistance to easily manage your envelopes and move money from/to them."
+}
