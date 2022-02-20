@@ -5,6 +5,23 @@ System. It has been designed to work with Philip Stratton explanation of the sys
 
 [![MoneyDance Tutorial #1 (fixed audio)](https://img.youtube.com/vi/eIcsMHL0NJ0/0.jpg)](https://www.youtube.com/watch?v=eIcsMHL0NJ0 "MoneyDance Tutorial #1 (fixed audio)")
 
+## Features
+
+* **Move money from envelopes to cover for uncleared expenses.** The extension will assist with the creation of
+  transactions to represent the movement of money from an envelope to the main account. The auto-generated transaction
+  will have the right values, and it'll also be linked to the original expense through metadata.
+
+## Installation
+
+1. Either [build the source code](#build) or [download the latest release](https://github.com/egrajeda/moneydance-envelope-manager/releases).
+
+2. Follow [Moneydance's official documentation to install extensions](https://help.infinitekind.com/support/solutions/articles/80000682003-installing-extensions).
+
+3. **The extension has not yet been audited and signed by The Infinite Kind**, so you'll get a confirmation box asking you if
+   you really want to continue loading the extension, click on **Yes**.
+   
+4. Open the extension by going to **Extensions > Envelope Manager**.
+
 ## Build
 
 1. Download the [Moneydance Developer's Kit](https://infinitekind.com/dev/moneydance-devkit-5.1.tar.gz) and extract it
