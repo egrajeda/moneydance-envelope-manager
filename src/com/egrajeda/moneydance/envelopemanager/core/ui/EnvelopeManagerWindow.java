@@ -90,9 +90,7 @@ public class EnvelopeManagerWindow extends JFrame {
     JComboBox<Account> accountComboBox =
         new JComboBox<>(transactionsManager.getAccountList().toArray(new Account[0]));
     accountComboBox.addItemListener(
-        itemEvent -> {
-          onAccountSelected((Account) itemEvent.getItem());
-        });
+        itemEvent -> onAccountSelected((Account) itemEvent.getItem()));
     accountComboBox.setMaximumSize(accountComboBox.getPreferredSize());
 
     subPanel0.add(new JLabel("Account:"));
@@ -114,9 +112,8 @@ public class EnvelopeManagerWindow extends JFrame {
 
     JTabbedPane tabbedPane = new JTabbedPane();
 
+    tabbedPane.add("Overview", envelopesReportTab);
     tabbedPane.add("Uncleared Transactions", new JScrollPane(table));
-//    Temporarily disable for 1.0 release.
-//    tabbedPane.add("Envelopes Report", envelopesReportTab);
 
     panel.add(tabbedPane, BorderLayout.CENTER);
 
@@ -136,7 +133,7 @@ public class EnvelopeManagerWindow extends JFrame {
     selectedAccount = account;
     refreshTransactionList();
     refreshEnvelopeList();
-    envelopesReportTab.refreshEnvelopeReportList(selectedAccount.getId());
+    envelopesReportTab.setAccountId(selectedAccount.getId());
   }
 
   private void refreshTransactionList() {

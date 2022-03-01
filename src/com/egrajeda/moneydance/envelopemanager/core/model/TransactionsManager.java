@@ -1,5 +1,6 @@
 package com.egrajeda.moneydance.envelopemanager.core.model;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -14,5 +15,5 @@ public interface TransactionsManager {
 
   void clearEnvelopeOfTransaction(Transaction transaction);
 
-  List<EnvelopeReport> getEnvelopeReportList(String accountId, Date start, Date end);
+  List<EnvelopeReport> getEnvelopeReportList(String accountId, LocalDate start, LocalDate end);
 }

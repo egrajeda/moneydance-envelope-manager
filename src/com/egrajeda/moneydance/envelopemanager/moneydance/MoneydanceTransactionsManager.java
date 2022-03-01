@@ -4,15 +4,13 @@ import com.egrajeda.moneydance.envelopemanager.core.model.Envelope;
 import com.egrajeda.moneydance.envelopemanager.core.model.EnvelopeReport;
 import com.egrajeda.moneydance.envelopemanager.core.model.Transaction;
 import com.egrajeda.moneydance.envelopemanager.core.model.TransactionsManager;
-import com.egrajeda.moneydance.envelopemanager.core.ui.DateUtils;
 import com.infinitekind.moneydance.model.*;
-import com.infinitekind.util.DateUtil;
 import com.infinitekind.util.StringUtils;
 import com.moneydance.apps.md.controller.FeatureModuleContext;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -124,19 +122,21 @@ public class MoneydanceTransactionsManager implements TransactionsManager {
   }
 
   @Override
-  public List<EnvelopeReport> getEnvelopeReportList(String accountId, Date start, Date end) {
+  public List<EnvelopeReport> getEnvelopeReportList(
+      String accountId, LocalDate start, LocalDate end) {
     return getEnvelopeList(accountId).stream()
         .map(envelope -> getEnvelopeReport(envelope, start, end))
         .collect(Collectors.toList());
   }
 
-  private EnvelopeReport getEnvelopeReport(Envelope envelope, Date start, Date end) {
+  private EnvelopeReport getEnvelopeReport(Envelope envelope, LocalDate start, LocalDate end) {
     Account envelopeAccount = accountBook.getAccountByUUID(envelope.getId());
 
     TxnSet transactionSet =
         accountBook
             .getTransactionSet()
-            .getTransactions(TxnUtil.getSearch(envelopeAccount, new DateRange(start, end)));
+            .getTransactions(
+                TxnUtil.getSearch(envelopeAccount, LocalDateUtils.createDateRange(start, end)));
 
     CurrencyUnit currencyUnit = CurrencyUnit.of(envelopeAccount.getCurrencyType().getIDString());
     Money budget = Money.zero(currencyUnit);
@@ -175,10 +175,10 @@ public class MoneydanceTransactionsManager implements TransactionsManager {
     return (ParentTxn) abstractTxn;
   }
 
-  private Money getBalanceAtStartOf(Account account, Date date) {
+  private Money getBalanceAtStartOf(Account account, LocalDate date) {
     long balance =
         AccountUtil.getBalanceAsOfDate(
-            accountBook, account, DateUtil.convertDateToInt(DateUtils.decrementDays(date, 1)));
+            accountBook, account, LocalDateUtils.convertLocalDateToInt(date.minusDays(1)));
     return MoneydanceMapper.toMoney(balance, account.getCurrencyType());
   }
 }

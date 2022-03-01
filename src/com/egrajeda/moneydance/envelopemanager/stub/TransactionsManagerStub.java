@@ -5,6 +5,7 @@ import com.egrajeda.moneydance.envelopemanager.core.ui.DateUtils;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 
+import java.time.LocalDate;
 import java.util.*;
 
 public class TransactionsManagerStub implements TransactionsManager {
@@ -93,7 +94,7 @@ public class TransactionsManagerStub implements TransactionsManager {
   public void clearEnvelopeOfTransaction(Transaction transaction) {}
 
   @Override
-  public List<EnvelopeReport> getEnvelopeReportList(String accountId, Date start, Date end) {
+  public List<EnvelopeReport> getEnvelopeReportList(String accountId, LocalDate start, LocalDate end) {
     return ENVELOPE_REPORT_LIST;
   }
 }
