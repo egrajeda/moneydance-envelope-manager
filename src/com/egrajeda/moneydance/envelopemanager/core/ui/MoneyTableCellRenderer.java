@@ -8,8 +8,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MoneyTableCellRenderer extends DefaultTableCellRenderer {
-  private static final Color FOREGROUND_COLOR = new Color(51, 51, 51);
+  private static final Color POSITIVE_FOREGROUND_COLOR = new Color(51, 51, 51);
   private static final Color NEGATIVE_FOREGROUND_COLOR = new Color(220, 50, 47);
+  private static final Color ZERO_FOREGROUND_COLOR = new Color(153, 153, 153);
   private static final MoneyFormatter MONEY_FORMATTER =
       new MoneyFormatterBuilder().appendAmount().toFormatter();
   private final boolean isUnsigned;
@@ -30,7 +31,13 @@ public class MoneyTableCellRenderer extends DefaultTableCellRenderer {
     Component component =
         super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
     setFont(MONOSPACED_FONT);
-    setForeground(money.isPositiveOrZero() ? FOREGROUND_COLOR : NEGATIVE_FOREGROUND_COLOR);
+    if (money.isPositive()) {
+      setForeground(POSITIVE_FOREGROUND_COLOR);
+    } else if (money.isNegative()) {
+      setForeground(NEGATIVE_FOREGROUND_COLOR);
+    } else {;
+      setForeground(ZERO_FOREGROUND_COLOR);
+    }
     setHorizontalAlignment(SwingConstants.RIGHT);
     return component;
   }
