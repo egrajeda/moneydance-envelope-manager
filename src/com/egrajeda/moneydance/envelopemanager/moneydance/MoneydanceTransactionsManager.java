@@ -1,9 +1,7 @@
 package com.egrajeda.moneydance.envelopemanager.moneydance;
 
-import com.egrajeda.moneydance.envelopemanager.core.model.Envelope;
-import com.egrajeda.moneydance.envelopemanager.core.model.EnvelopeReport;
-import com.egrajeda.moneydance.envelopemanager.core.model.Transaction;
-import com.egrajeda.moneydance.envelopemanager.core.model.TransactionsManager;
+import com.egrajeda.moneydance.envelopemanager.core.model.*;
+import com.infinitekind.moneydance.model.Account;
 import com.infinitekind.moneydance.model.*;
 import com.infinitekind.util.StringUtils;
 import com.moneydance.apps.md.controller.FeatureModuleContext;
@@ -25,6 +23,11 @@ public class MoneydanceTransactionsManager implements TransactionsManager {
   public MoneydanceTransactionsManager(FeatureModuleContext featureModuleContext) {
     this.accountBook = featureModuleContext.getCurrentAccountBook();
     this.moneydanceMapper = new MoneydanceMapper(accountBook);
+  }
+
+  @Override
+  public com.egrajeda.moneydance.envelopemanager.core.model.Account getAccount(String accountId) {
+    return MoneydanceMapper.toAccount(accountBook.getAccountByUUID(accountId));
   }
 
   @Override
@@ -126,6 +129,24 @@ public class MoneydanceTransactionsManager implements TransactionsManager {
       String accountId, LocalDate start, LocalDate end) {
     return getEnvelopeList(accountId).stream()
         .map(envelope -> getEnvelopeReport(envelope, start, end))
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<EnvelopeBudget> getEnvelopeBudgetList(String accountId) {
+    Account account = accountBook.getAccountByUUID(accountId);
+    CurrencyUnit accountCurrency = CurrencyUnit.of(account.getCurrencyType().getIDString());
+
+    return getEnvelopeList(accountId).stream()
+        .filter(envelope -> envelope.getBalance().getCurrencyUnit().equals(accountCurrency))
+        .map(
+            envelope ->
+                new EnvelopeBudget(
+                    envelope.getId(),
+                    envelope.getName(),
+                    BudgetType.PERCENTAGE,
+                    0.05f,
+                    null))
         .collect(Collectors.toList());
   }
 

@@ -18,6 +18,7 @@ public class EnvelopeManagerWindow extends JFrame {
   private final TransactionsManager transactionsManager;
   private final TransactionsTableModel transactionsTableModel;
   private final EnvelopesComboBoxModel envelopesComboBoxModel;
+  private final EnvelopesBudgetTab envelopesBudgetTab;
   private final EnvelopesReportTab envelopesReportTab;
   private Account selectedAccount;
   private WindowClosingListener windowClosingListener;
@@ -108,11 +109,13 @@ public class EnvelopeManagerWindow extends JFrame {
 
     panel.add(subPanel0, BorderLayout.PAGE_START);
 
+    envelopesBudgetTab = new EnvelopesBudgetTab(transactionsManager);
     envelopesReportTab = new EnvelopesReportTab(transactionsManager);
 
     JTabbedPane tabbedPane = new JTabbedPane();
 
     tabbedPane.add("Overview", envelopesReportTab);
+    tabbedPane.add("Budget", envelopesBudgetTab);
     tabbedPane.add("Uncleared Transactions", new JScrollPane(table));
 
     panel.add(tabbedPane, BorderLayout.CENTER);
@@ -133,6 +136,7 @@ public class EnvelopeManagerWindow extends JFrame {
     selectedAccount = account;
     refreshTransactionList();
     refreshEnvelopeList();
+    envelopesBudgetTab.setAccountId(selectedAccount.getId());
     envelopesReportTab.setAccountId(selectedAccount.getId());
   }
 

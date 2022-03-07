@@ -32,6 +32,13 @@ public class TransactionsManagerStub implements TransactionsManager {
               Money.of(CurrencyUnit.EUR, 0.00),
               Money.of(CurrencyUnit.EUR, 0.00)));
 
+  private static final List<EnvelopeBudget> ENVELOPE_BUDGET_LIST =
+      List.of(
+          new EnvelopeBudget("Savings", BudgetType.PERCENTAGE, 0.15f, null),
+          new EnvelopeBudget(
+              "Supermarket", BudgetType.AMOUNT, null, Money.of(CurrencyUnit.EUR, 3000)),
+          new EnvelopeBudget("Other", BudgetType.LEFTOVER, null, null));
+
   private static final Map<String, List<Transaction>> TRANSACTION_LIST_BY_ACCOUNT_ID =
       new HashMap<>() {
         {
@@ -73,6 +80,11 @@ public class TransactionsManagerStub implements TransactionsManager {
       };
 
   @Override
+  public Account getAccount(String accountId) {
+    return ACCOUNT_LIST.get(0);
+  }
+
+  @Override
   public List<Account> getAccountList() {
     return ACCOUNT_LIST;
   }
@@ -94,7 +106,13 @@ public class TransactionsManagerStub implements TransactionsManager {
   public void clearEnvelopeOfTransaction(Transaction transaction) {}
 
   @Override
-  public List<EnvelopeReport> getEnvelopeReportList(String accountId, LocalDate start, LocalDate end) {
+  public List<EnvelopeReport> getEnvelopeReportList(
+      String accountId, LocalDate start, LocalDate end) {
     return ENVELOPE_REPORT_LIST;
+  }
+
+  @Override
+  public List<EnvelopeBudget> getEnvelopeBudgetList(String accountId) {
+    return ENVELOPE_BUDGET_LIST;
   }
 }

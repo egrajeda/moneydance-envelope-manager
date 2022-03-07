@@ -26,6 +26,10 @@ public class MoneyTableCellRenderer extends DefaultTableCellRenderer {
   @Override
   public Component getTableCellRendererComponent(
       JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    if (value == null) {
+      return super.getTableCellRendererComponent(table, null, isSelected, hasFocus, row, column);
+    }
+
     Money money = isUnsigned ? ((Money) value).abs() : (Money) value;
     value = MONEY_FORMATTER.print(money);
     Component component =
@@ -35,7 +39,7 @@ public class MoneyTableCellRenderer extends DefaultTableCellRenderer {
       setForeground(POSITIVE_FOREGROUND_COLOR);
     } else if (money.isNegative()) {
       setForeground(NEGATIVE_FOREGROUND_COLOR);
-    } else {;
+    } else {
       setForeground(ZERO_FOREGROUND_COLOR);
     }
     setHorizontalAlignment(SwingConstants.RIGHT);
