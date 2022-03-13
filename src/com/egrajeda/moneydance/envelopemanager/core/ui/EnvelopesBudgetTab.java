@@ -37,6 +37,14 @@ public class EnvelopesBudgetTab extends JPanel {
           .setPreferredWidth(envelopeBudgetTableModel.getColumnWidth(column));
     }
 
+    PercentageCellEditor percentageCellEditor = new PercentageCellEditor();
+    percentageCellEditor.setClickCountToStart(2);
+
+    table
+        .getColumnModel()
+        .getColumn(EnvelopeBudgetTableModel.COLUMN_BUDGET_PERCENTAGE_INDEX)
+        .setCellEditor(percentageCellEditor);
+
     add(new JScrollPane(table), BorderLayout.CENTER);
   }
 
@@ -63,25 +71,26 @@ public class EnvelopesBudgetTab extends JPanel {
 
     List<EnvelopeBudgetTableRow> envelopeBudgetTableRowList = new ArrayList<>();
     envelopeBudgetTableRowList.add(
-        new EnvelopeBudgetTableRow("Income", budgetPlan.getAmount(), null, null, null));
-    envelopeBudgetTableRowList.add(new EnvelopeBudgetTableRow(null, null, null, null, null));
+        EnvelopeBudgetTableRow.fromIncome("Income", budgetPlan.getAmount()));
+    envelopeBudgetTableRowList.add(EnvelopeBudgetTableRow.empty());
 
     envelopeBudgetTableRowList.addAll(
         budgetPlan.getItemList().stream()
             .map(
                 item ->
-                    new EnvelopeBudgetTableRow(
+                    EnvelopeBudgetTableRow.fromBudget(
                         item.getEnvelopeBudget().getName(),
-                        null,
                         item.getEnvelopeBudget().getType(),
                         item.getPercentage(),
                         item.getAmount()))
             .toList());
 
-    envelopeBudgetTableRowList.add(new EnvelopeBudgetTableRow(null, null, null, null, null));
+    envelopeBudgetTableRowList.add(EnvelopeBudgetTableRow.empty());
     envelopeBudgetTableRowList.add(
-        new EnvelopeBudgetTableRow("Balance", budgetPlan.getLeftover(), null, null, null));
+        EnvelopeBudgetTableRow.fromIncome("Balance", budgetPlan.getLeftover()));
 
+    envelopeBudgetTableModel.setIncome(budgetPlan.getAmount());
     envelopeBudgetTableModel.setEnvelopeBudgetTableRowList(envelopeBudgetTableRowList);
   }
+
 }

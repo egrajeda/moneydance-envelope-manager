@@ -19,6 +19,19 @@ public class EnvelopeBudgetTableRow {
     this.budget = budget;
   }
 
+  public static EnvelopeBudgetTableRow empty() {
+    return new EnvelopeBudgetTableRow("", null, null, null, null);
+  }
+
+  public static EnvelopeBudgetTableRow fromIncome(String name, Money amount) {
+    return new EnvelopeBudgetTableRow(name, amount, null, null, null);
+  }
+
+  public static EnvelopeBudgetTableRow fromBudget(
+      String name, BudgetType budgetType, float percentage, Money amount) {
+    return new EnvelopeBudgetTableRow(name, null, budgetType, percentage, amount);
+  }
+
   public String getName() {
     return name;
   }
