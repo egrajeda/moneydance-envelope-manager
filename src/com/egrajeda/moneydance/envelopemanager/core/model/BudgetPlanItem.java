@@ -1,5 +1,6 @@
 package com.egrajeda.moneydance.envelopemanager.core.model;
 
+import com.egrajeda.moneydance.envelopemanager.core.ui.MoneyUtils;
 import org.joda.money.Money;
 
 import java.math.RoundingMode;
@@ -17,10 +18,7 @@ public class BudgetPlanItem {
 
   public static BudgetPlanItem fromAmount(
       Money amount, Money total, EnvelopeBudget envelopeBudget) {
-    return new BudgetPlanItem(
-        amount,
-        amount.dividedBy(total.getAmount(), RoundingMode.HALF_EVEN).getAmount().floatValue(),
-        envelopeBudget);
+    return new BudgetPlanItem(amount, MoneyUtils.divide(amount, total), envelopeBudget);
   }
 
   public static BudgetPlanItem fromPercentage(

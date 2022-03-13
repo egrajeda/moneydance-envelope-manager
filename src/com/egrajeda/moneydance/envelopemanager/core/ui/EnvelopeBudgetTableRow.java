@@ -6,7 +6,7 @@ import org.joda.money.Money;
 public class EnvelopeBudgetTableRow {
   private final String name;
   private final Money income;
-  private final BudgetType type;
+  private BudgetType type;
   private Float percentage;
   private Money budget;
 
@@ -42,6 +42,10 @@ public class EnvelopeBudgetTableRow {
 
   public BudgetType getType() {
     return type;
+  }
+
+  public void setType(BudgetType type) {
+    this.type = type;
   }
 
   public Float getPercentage() {

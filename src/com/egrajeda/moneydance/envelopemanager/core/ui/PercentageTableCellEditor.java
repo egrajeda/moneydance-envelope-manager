@@ -6,11 +6,11 @@ import java.awt.*;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
-class PercentageCellEditor extends DefaultCellEditor implements TableCellEditor {
+public class PercentageTableCellEditor extends DefaultCellEditor implements TableCellEditor {
   private final NumberFormat numberFormat = NumberFormat.getNumberInstance();
   private final JTextField textField;
 
-  public PercentageCellEditor() {
+  public PercentageTableCellEditor() {
     super(new JTextField());
     numberFormat.setMinimumFractionDigits(2);
     textField = (JTextField) super.getComponent();

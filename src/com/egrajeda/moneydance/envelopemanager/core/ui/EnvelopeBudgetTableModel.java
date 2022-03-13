@@ -94,15 +94,36 @@ public class EnvelopeBudgetTableModel extends AbstractTableModel {
       if (!Objects.equals(value, row.getPercentage())) {
         float percentage = (float) value;
 
-        row.setPercentage(percentage);
-        fireTableCellUpdated(rowIndex, columnIndex);
+        setValuesAndFireTableCellsUpdated(
+            rowIndex,
+            BudgetType.PERCENTAGE,
+            percentage,
+            income.multipliedBy(percentage, RoundingMode.HALF_EVEN));
+      }
+    } else if (columnIndex == COLUMN_BUDGET_INDEX) {
+      if (!Objects.equals(value, row.getBudget())) {
+        Money budget = (Money) value;
 
-        row.setBudget(income.multipliedBy(percentage, RoundingMode.HALF_EVEN));
-        fireTableCellUpdated(rowIndex, COLUMN_BUDGET_INDEX);
+        setValuesAndFireTableCellsUpdated(
+            rowIndex, BudgetType.AMOUNT, MoneyUtils.divide(budget, income), budget);
       }
     } else {
       throw new IllegalStateException("Unexpected value: " + columnIndex);
     }
+  }
+
+  private void setValuesAndFireTableCellsUpdated(
+      int rowIndex, BudgetType type, float percentage, Money budget) {
+    EnvelopeBudgetTableRow row = envelopeBudgetTableRowList.get(rowIndex);
+
+    row.setType(type);
+    fireTableCellUpdated(rowIndex, COLUMN_BUDGET_TYPE_INDEX);
+
+    row.setPercentage(percentage);
+    fireTableCellUpdated(rowIndex, COLUMN_BUDGET_PERCENTAGE_INDEX);
+
+    row.setBudget(budget);
+    fireTableCellUpdated(rowIndex, COLUMN_BUDGET_INDEX);
   }
 
   @Override

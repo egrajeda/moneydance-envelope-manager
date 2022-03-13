@@ -1,6 +1,7 @@
 package com.egrajeda.moneydance.envelopemanager.core.ui;
 
 import com.egrajeda.moneydance.envelopemanager.core.model.*;
+import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 
 import javax.swing.*;
@@ -13,14 +14,14 @@ import java.util.List;
 
 public class EnvelopesBudgetTab extends JPanel {
   private final TransactionsManager transactionsManager;
-  private final EnvelopeBudgetTableModel envelopeBudgetTableModel;
+  private final EnvelopeBudgetTableModel envelopeBudgetTableModel = new EnvelopeBudgetTableModel();
+  private final MoneyTableCellEditor moneyTableCellEditor = new MoneyTableCellEditor();
   private String accountId;
 
   public EnvelopesBudgetTab(TransactionsManager transactionsManager) {
     super(new BorderLayout());
     this.transactionsManager = transactionsManager;
 
-    envelopeBudgetTableModel = new EnvelopeBudgetTableModel();
     JTable table = new JTable(envelopeBudgetTableModel);
     table.setDefaultRenderer(String.class, new DefaultTableCellRenderer());
     table.setDefaultRenderer(Money.class, new MoneyTableCellRenderer());
@@ -37,13 +38,20 @@ public class EnvelopesBudgetTab extends JPanel {
           .setPreferredWidth(envelopeBudgetTableModel.getColumnWidth(column));
     }
 
-    PercentageCellEditor percentageCellEditor = new PercentageCellEditor();
-    percentageCellEditor.setClickCountToStart(2);
+    PercentageTableCellEditor percentageTableCellEditor = new PercentageTableCellEditor();
+    percentageTableCellEditor.setClickCountToStart(2);
 
     table
         .getColumnModel()
         .getColumn(EnvelopeBudgetTableModel.COLUMN_BUDGET_PERCENTAGE_INDEX)
-        .setCellEditor(percentageCellEditor);
+        .setCellEditor(percentageTableCellEditor);
+
+    moneyTableCellEditor.setClickCountToStart(2);
+
+    table
+        .getColumnModel()
+        .getColumn(EnvelopeBudgetTableModel.COLUMN_BUDGET_INDEX)
+        .setCellEditor(moneyTableCellEditor);
 
     add(new JScrollPane(table), BorderLayout.CENTER);
   }
@@ -59,12 +67,12 @@ public class EnvelopesBudgetTab extends JPanel {
     }
 
     Account account = transactionsManager.getAccount(accountId);
+    CurrencyUnit currency = account.getBalance().getCurrencyUnit();
     List<EnvelopeBudget> envelopeBudgetList = transactionsManager.getEnvelopeBudgetList(accountId);
     Money income =
         Money.of(
-            account.getBalance().getCurrencyUnit(),
-            BigDecimal.valueOf(3000)
-                .movePointLeft(account.getBalance().getCurrencyUnit().getDecimalPlaces()),
+            currency,
+            BigDecimal.valueOf(3000).movePointLeft(currency.getDecimalPlaces()),
             RoundingMode.HALF_EVEN);
 
     BudgetPlan budgetPlan = BudgetPlan.calculate(income, envelopeBudgetList);
@@ -91,6 +99,7 @@ public class EnvelopesBudgetTab extends JPanel {
 
     envelopeBudgetTableModel.setIncome(budgetPlan.getAmount());
     envelopeBudgetTableModel.setEnvelopeBudgetTableRowList(envelopeBudgetTableRowList);
-  }
 
+    moneyTableCellEditor.setCurrency(currency);
+  }
 }
