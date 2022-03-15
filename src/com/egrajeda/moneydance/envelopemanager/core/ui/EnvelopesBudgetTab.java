@@ -1,6 +1,9 @@
 package com.egrajeda.moneydance.envelopemanager.core.ui;
 
-import com.egrajeda.moneydance.envelopemanager.core.model.*;
+import com.egrajeda.moneydance.envelopemanager.core.model.Account;
+import com.egrajeda.moneydance.envelopemanager.core.model.BudgetType;
+import com.egrajeda.moneydance.envelopemanager.core.model.EnvelopeBudget;
+import com.egrajeda.moneydance.envelopemanager.core.model.TransactionsManager;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 
@@ -9,7 +12,6 @@ import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.List;
 
 public class EnvelopesBudgetTab extends JPanel {
@@ -37,6 +39,15 @@ public class EnvelopesBudgetTab extends JPanel {
           .getColumn(column)
           .setPreferredWidth(envelopeBudgetTableModel.getColumnWidth(column));
     }
+
+    JComboBox<BudgetType> budgetTypesComboBox = new JComboBox<>(BudgetType.values());
+    DefaultCellEditor budgetTypesTableCellEditor = new DefaultCellEditor(budgetTypesComboBox);
+    budgetTypesTableCellEditor.setClickCountToStart(2);
+
+    table
+        .getColumnModel()
+        .getColumn(EnvelopeBudgetTableModel.COLUMN_BUDGET_TYPE_INDEX)
+        .setCellEditor(budgetTypesTableCellEditor);
 
     PercentageTableCellEditor percentageTableCellEditor = new PercentageTableCellEditor();
     percentageTableCellEditor.setClickCountToStart(2);
@@ -75,30 +86,8 @@ public class EnvelopesBudgetTab extends JPanel {
             BigDecimal.valueOf(3000).movePointLeft(currency.getDecimalPlaces()),
             RoundingMode.HALF_EVEN);
 
-    BudgetPlan budgetPlan = BudgetPlan.calculate(income, envelopeBudgetList);
-
-    List<EnvelopeBudgetTableRow> envelopeBudgetTableRowList = new ArrayList<>();
-    envelopeBudgetTableRowList.add(
-        EnvelopeBudgetTableRow.fromIncome("Income", budgetPlan.getAmount()));
-    envelopeBudgetTableRowList.add(EnvelopeBudgetTableRow.empty());
-
-    envelopeBudgetTableRowList.addAll(
-        budgetPlan.getItemList().stream()
-            .map(
-                item ->
-                    EnvelopeBudgetTableRow.fromBudget(
-                        item.getEnvelopeBudget().getName(),
-                        item.getEnvelopeBudget().getType(),
-                        item.getPercentage(),
-                        item.getAmount()))
-            .toList());
-
-    envelopeBudgetTableRowList.add(EnvelopeBudgetTableRow.empty());
-    envelopeBudgetTableRowList.add(
-        EnvelopeBudgetTableRow.fromIncome("Balance", budgetPlan.getLeftover()));
-
-    envelopeBudgetTableModel.setIncome(budgetPlan.getAmount());
-    envelopeBudgetTableModel.setEnvelopeBudgetTableRowList(envelopeBudgetTableRowList);
+    envelopeBudgetTableModel.setIncome(income);
+    envelopeBudgetTableModel.setEnvelopeBudgetList(envelopeBudgetList);
 
     moneyTableCellEditor.setCurrency(currency);
   }

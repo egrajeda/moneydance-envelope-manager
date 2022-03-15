@@ -1,35 +1,52 @@
 package com.egrajeda.moneydance.envelopemanager.core.ui;
 
 import com.egrajeda.moneydance.envelopemanager.core.model.BudgetType;
+import com.egrajeda.moneydance.envelopemanager.core.model.EnvelopeBudget;
 import org.joda.money.Money;
 
 public class EnvelopeBudgetTableRow {
+  private final EnvelopeBudget envelopeBudget;
   private final String name;
   private final Money income;
-  private BudgetType type;
-  private Float percentage;
-  private Money budget;
+  private final BudgetType type;
+  private final Float percentage;
+  private final Money budget;
 
-  public EnvelopeBudgetTableRow(
-      String name, Money income, BudgetType type, Float percentage, Money budget) {
-    this.name = name;
-    this.income = income;
-    this.type = type;
+  private EnvelopeBudgetTableRow(EnvelopeBudget envelopeBudget, Float percentage, Money budget) {
+    this.envelopeBudget = envelopeBudget;
+    this.name = envelopeBudget.getName();
+    this.type = envelopeBudget.getType();
     this.percentage = percentage;
     this.budget = budget;
+
+    this.income = null;
+  }
+
+  private EnvelopeBudgetTableRow(String name, Money income) {
+    this.name = name;
+    this.income = income;
+
+    this.envelopeBudget = null;
+    this.type = null;
+    this.percentage = null;
+    this.budget = null;
   }
 
   public static EnvelopeBudgetTableRow empty() {
-    return new EnvelopeBudgetTableRow("", null, null, null, null);
+    return new EnvelopeBudgetTableRow(null, null);
   }
 
   public static EnvelopeBudgetTableRow fromIncome(String name, Money amount) {
-    return new EnvelopeBudgetTableRow(name, amount, null, null, null);
+    return new EnvelopeBudgetTableRow(name, amount);
   }
 
-  public static EnvelopeBudgetTableRow fromBudget(
-      String name, BudgetType budgetType, float percentage, Money amount) {
-    return new EnvelopeBudgetTableRow(name, null, budgetType, percentage, amount);
+  public static EnvelopeBudgetTableRow fromEnvelopeBudget(
+      EnvelopeBudget envelopeBudget, float percentage, Money amount) {
+    return new EnvelopeBudgetTableRow(envelopeBudget, percentage, amount);
+  }
+
+  public EnvelopeBudget getEnvelopeBudget() {
+    return envelopeBudget;
   }
 
   public String getName() {
@@ -44,23 +61,11 @@ public class EnvelopeBudgetTableRow {
     return type;
   }
 
-  public void setType(BudgetType type) {
-    this.type = type;
-  }
-
   public Float getPercentage() {
     return percentage;
   }
 
-  public void setPercentage(Float percentage) {
-    this.percentage = percentage;
-  }
-
   public Money getBudget() {
     return budget;
-  }
-
-  public void setBudget(Money budget) {
-    this.budget = budget;
   }
 }

@@ -46,6 +46,12 @@ public class BudgetPlan {
         itemList.add(BudgetPlanItem.fromAmount(evenlySplitLeftover, amount, envelopeBudget));
         leftover = leftover.minus(evenlySplitLeftover);
       }
+    } else if (!leftoverEnvelopeBudgetList.isEmpty()) {
+      for (EnvelopeBudget envelopeBudget : leftoverEnvelopeBudgetList) {
+        itemList.add(
+            BudgetPlanItem.fromAmount(
+                Money.zero(amount.getCurrencyUnit()), amount, envelopeBudget));
+      }
     }
 
     return new BudgetPlan(amount, leftover, itemList);

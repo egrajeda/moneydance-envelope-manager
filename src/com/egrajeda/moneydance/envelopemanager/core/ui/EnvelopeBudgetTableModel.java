@@ -1,13 +1,12 @@
 package com.egrajeda.moneydance.envelopemanager.core.ui;
 
+import com.egrajeda.moneydance.envelopemanager.core.model.BudgetPlan;
 import com.egrajeda.moneydance.envelopemanager.core.model.BudgetType;
+import com.egrajeda.moneydance.envelopemanager.core.model.EnvelopeBudget;
 import org.joda.money.Money;
 
 import javax.swing.table.AbstractTableModel;
-import java.math.RoundingMode;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class EnvelopeBudgetTableModel extends AbstractTableModel {
   public static final int COLUMN_NAME_INDEX = 0;
@@ -20,15 +19,39 @@ public class EnvelopeBudgetTableModel extends AbstractTableModel {
   };
   private static final int[] COLUMN_WIDTHS = new int[] {450, 100, 100, 100, 100};
   private Money income;
+  private List<EnvelopeBudget> envelopeBudgetList = Collections.emptyList();
   private List<EnvelopeBudgetTableRow> envelopeBudgetTableRowList = Collections.emptyList();
 
   public void setIncome(Money income) {
     this.income = income;
   }
 
-  public void setEnvelopeBudgetTableRowList(
-      List<EnvelopeBudgetTableRow> envelopeBudgetTableRowList) {
-    this.envelopeBudgetTableRowList = envelopeBudgetTableRowList;
+  public void setEnvelopeBudgetList(List<EnvelopeBudget> envelopeBudgetList) {
+    this.envelopeBudgetList = envelopeBudgetList;
+    refreshEnvelopeBudgetTableRowList();
+  }
+
+  public void refreshEnvelopeBudgetTableRowList() {
+    BudgetPlan budgetPlan = BudgetPlan.calculate(income, envelopeBudgetList);
+
+    envelopeBudgetTableRowList = new ArrayList<>();
+    envelopeBudgetTableRowList.add(
+        EnvelopeBudgetTableRow.fromIncome("Income", budgetPlan.getAmount()));
+    envelopeBudgetTableRowList.add(EnvelopeBudgetTableRow.empty());
+
+    envelopeBudgetTableRowList.addAll(
+        budgetPlan.getItemList().stream()
+            .map(
+                item ->
+                    EnvelopeBudgetTableRow.fromEnvelopeBudget(
+                        item.getEnvelopeBudget(), item.getPercentage(), item.getAmount()))
+            .sorted(Comparator.comparing(EnvelopeBudgetTableRow::getName))
+            .toList());
+
+    envelopeBudgetTableRowList.add(EnvelopeBudgetTableRow.empty());
+    envelopeBudgetTableRowList.add(
+        EnvelopeBudgetTableRow.fromIncome("Balance", budgetPlan.getLeftover()));
+
     fireTableDataChanged();
   }
 
@@ -90,40 +113,32 @@ public class EnvelopeBudgetTableModel extends AbstractTableModel {
   @Override
   public void setValueAt(Object value, int rowIndex, int columnIndex) {
     EnvelopeBudgetTableRow row = envelopeBudgetTableRowList.get(rowIndex);
-    if (columnIndex == COLUMN_BUDGET_PERCENTAGE_INDEX) {
+    EnvelopeBudget envelopeBudget = row.getEnvelopeBudget();
+    if (columnIndex == COLUMN_BUDGET_TYPE_INDEX) {
+      if (!Objects.equals(value, row.getType())) {
+        BudgetType type = (BudgetType) value;
+        if (type == BudgetType.PERCENTAGE) {
+          envelopeBudget.setPercentage(row.getPercentage());
+        } else if (type == BudgetType.AMOUNT) {
+          envelopeBudget.setBudget(row.getBudget());
+        } else {
+          envelopeBudget.setType(type);
+        }
+        refreshEnvelopeBudgetTableRowList();
+      }
+    } else if (columnIndex == COLUMN_BUDGET_PERCENTAGE_INDEX) {
       if (!Objects.equals(value, row.getPercentage())) {
-        float percentage = (float) value;
-
-        setValuesAndFireTableCellsUpdated(
-            rowIndex,
-            BudgetType.PERCENTAGE,
-            percentage,
-            income.multipliedBy(percentage, RoundingMode.HALF_EVEN));
+        envelopeBudget.setPercentage((float) value);
+        refreshEnvelopeBudgetTableRowList();
       }
     } else if (columnIndex == COLUMN_BUDGET_INDEX) {
       if (!Objects.equals(value, row.getBudget())) {
-        Money budget = (Money) value;
-
-        setValuesAndFireTableCellsUpdated(
-            rowIndex, BudgetType.AMOUNT, MoneyUtils.divide(budget, income), budget);
+        envelopeBudget.setBudget((Money) value);
+        refreshEnvelopeBudgetTableRowList();
       }
     } else {
       throw new IllegalStateException("Unexpected value: " + columnIndex);
     }
-  }
-
-  private void setValuesAndFireTableCellsUpdated(
-      int rowIndex, BudgetType type, float percentage, Money budget) {
-    EnvelopeBudgetTableRow row = envelopeBudgetTableRowList.get(rowIndex);
-
-    row.setType(type);
-    fireTableCellUpdated(rowIndex, COLUMN_BUDGET_TYPE_INDEX);
-
-    row.setPercentage(percentage);
-    fireTableCellUpdated(rowIndex, COLUMN_BUDGET_PERCENTAGE_INDEX);
-
-    row.setBudget(budget);
-    fireTableCellUpdated(rowIndex, COLUMN_BUDGET_INDEX);
   }
 
   @Override
@@ -133,6 +148,8 @@ public class EnvelopeBudgetTableModel extends AbstractTableModel {
       return false;
     }
 
-    return columnIndex == COLUMN_BUDGET_PERCENTAGE_INDEX || columnIndex == COLUMN_BUDGET_INDEX;
+    return columnIndex == COLUMN_BUDGET_TYPE_INDEX
+        || columnIndex == COLUMN_BUDGET_PERCENTAGE_INDEX
+        || columnIndex == COLUMN_BUDGET_INDEX;
   }
 }
