@@ -104,12 +104,8 @@ public class EnvelopesBudgetTab extends JPanel {
 
     Account account = transactionsManager.getAccount(accountId);
     CurrencyUnit currency = account.getBalance().getCurrencyUnit();
+    Money income = account.getBalance();
     List<EnvelopeBudget> envelopeBudgetList = transactionsManager.getEnvelopeBudgetList(accountId);
-    Money income =
-        Money.of(
-            currency,
-            BigDecimal.valueOf(3000).movePointLeft(currency.getDecimalPlaces()),
-            RoundingMode.HALF_EVEN);
 
     envelopeBudgetTableModel.setIncome(income);
     envelopeBudgetTableModel.setEnvelopeBudgetList(envelopeBudgetList);

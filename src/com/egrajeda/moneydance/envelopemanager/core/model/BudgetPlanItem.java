@@ -18,7 +18,8 @@ public class BudgetPlanItem {
 
   public static BudgetPlanItem fromAmount(
       Money amount, Money total, EnvelopeBudget envelopeBudget) {
-    return new BudgetPlanItem(amount, MoneyUtils.divide(amount, total), envelopeBudget);
+    return new BudgetPlanItem(
+        amount, total.isZero() ? 0 : MoneyUtils.divide(amount, total), envelopeBudget);
   }
 
   public static BudgetPlanItem fromPercentage(
