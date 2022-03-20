@@ -13,20 +13,23 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class EnvelopeManagerWindow extends JFrame {
   private final TransactionsManager transactionsManager;
+  private final UserPreferences userPreferences;
   private final TransactionsTableModel transactionsTableModel;
   private final EnvelopesComboBoxModel envelopesComboBoxModel;
   private final EnvelopesBudgetTab envelopesBudgetTab;
   private final EnvelopesReportTab envelopesReportTab;
-  private Account selectedAccount;
+  private String selectedAccountId;
   private WindowClosingListener windowClosingListener;
 
   public EnvelopeManagerWindow(
       TransactionsManager transactionsManager, UserPreferences userPreferences) {
     super();
     this.transactionsManager = transactionsManager;
+    this.userPreferences = userPreferences;
 
     setTitle("Envelope Manager");
     setMinimumSize(new Dimension(1024, 768));
@@ -90,7 +93,7 @@ public class EnvelopeManagerWindow extends JFrame {
     JComboBox<Account> accountComboBox =
         new JComboBox<>(transactionsManager.getAccountList().toArray(new Account[0]));
     accountComboBox.addItemListener(
-        itemEvent -> onAccountSelected((Account) itemEvent.getItem()));
+        itemEvent -> onAccountSelected(((Account) itemEvent.getItem()).getId()));
     accountComboBox.setMaximumSize(accountComboBox.getPreferredSize());
 
     subPanel0.add(new JLabel("Account:"));
@@ -119,8 +122,15 @@ public class EnvelopeManagerWindow extends JFrame {
 
     panel.add(tabbedPane, BorderLayout.CENTER);
 
-    Account firstAccount = transactionsManager.getAccountList().get(0);
-    onAccountSelected(firstAccount);
+    Account account =
+        userPreferences.getSelectedAccountId() == null
+            ? transactionsManager.getAccountList().get(0)
+            : transactionsManager.getAccount(userPreferences.getSelectedAccountId());
+    if (Objects.equals(accountComboBox.getSelectedItem(), account)) {
+      onAccountSelected(account.getId());
+    } else {
+      accountComboBox.setSelectedItem(account);
+    }
 
     add(panel);
 
@@ -131,23 +141,25 @@ public class EnvelopeManagerWindow extends JFrame {
     this.windowClosingListener = windowClosingListener;
   }
 
-  private void onAccountSelected(Account account) {
-    selectedAccount = account;
+  private void onAccountSelected(String accountId) {
+    selectedAccountId = accountId;
+    userPreferences.setSelectedAccountId(selectedAccountId);
+
     refreshTransactionList();
     refreshEnvelopeList();
-    envelopesBudgetTab.setAccountId(selectedAccount.getId());
-    envelopesReportTab.setAccountId(selectedAccount.getId());
+    envelopesBudgetTab.setAccountId(selectedAccountId);
+    envelopesReportTab.setAccountId(selectedAccountId);
   }
 
   private void refreshTransactionList() {
     transactionsTableModel.setTransactionList(
-        transactionsManager.getTransactionList(selectedAccount.getId()));
+        transactionsManager.getTransactionList(selectedAccountId));
   }
 
   private void refreshEnvelopeList() {
     List<Envelope> envelopeList = new ArrayList<>();
     envelopeList.add(new NullEnvelope());
-    envelopeList.addAll(transactionsManager.getEnvelopeList(selectedAccount.getId()));
+    envelopeList.addAll(transactionsManager.getEnvelopeList(selectedAccountId));
     envelopesComboBoxModel.setEnvelopeList(envelopeList);
   }
 

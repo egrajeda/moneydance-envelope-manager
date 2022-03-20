@@ -7,4 +7,12 @@ public class UserPreferencesStub implements UserPreferences {
   public String getDateFormat() {
     return "dd/MM/yyyy";
   }
+
+  @Override
+  public String getSelectedAccountId() {
+    return null;
+  }
+
+  @Override
+  public void setSelectedAccountId(String accountId) {}
 }

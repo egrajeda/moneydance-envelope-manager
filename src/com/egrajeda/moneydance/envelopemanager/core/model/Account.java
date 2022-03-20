@@ -2,6 +2,7 @@ package com.egrajeda.moneydance.envelopemanager.core.model;
 
 import org.joda.money.Money;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class Account {
@@ -34,5 +35,18 @@ public class Account {
   @Override
   public String toString() {
     return this.name;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Account account = (Account) o;
+    return id.equals(account.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
   }
 }

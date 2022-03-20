@@ -84,7 +84,7 @@ public class EnvelopesBudgetTab extends JPanel {
               JOptionPane.showConfirmDialog(
                   this,
                   "A new transaction will be created per envelope to transfer the amount specified from the main account.\nAre you sure you want to continue?",
-                  "Assign Budget?",
+                  "Assign budget?",
                   JOptionPane.YES_NO_OPTION,
                   JOptionPane.QUESTION_MESSAGE);
           if (result == JOptionPane.YES_OPTION) {

@@ -5,19 +5,29 @@ import com.moneydance.apps.md.controller.FeatureModuleContext;
 import com.moneydance.apps.md.controller.Main;
 
 public class MoneydanceUserPreferences implements UserPreferences {
-  private final String dateFormat;
+  private static final String SELECTED_ACCOUNT_ID_SETTING_KEY = "envelopeManager:selectedAccountId";
+  private final com.moneydance.apps.md.controller.UserPreferences userPreferences;
 
   public MoneydanceUserPreferences(FeatureModuleContext featureModuleContext) {
     if (!(featureModuleContext instanceof Main)) {
       throw new IllegalArgumentException();
     }
 
-    Main main = (Main) featureModuleContext;
-    this.dateFormat = main.getPreferences().getShortDateFormat();
+    userPreferences = ((Main) featureModuleContext).getPreferences();
   }
 
   @Override
   public String getDateFormat() {
-    return dateFormat;
+    return userPreferences.getShortDateFormat();
+  }
+
+  @Override
+  public String getSelectedAccountId() {
+    return userPreferences.getSetting(SELECTED_ACCOUNT_ID_SETTING_KEY);
+  }
+
+  @Override
+  public void setSelectedAccountId(String accountId) {
+    userPreferences.setSetting(SELECTED_ACCOUNT_ID_SETTING_KEY, accountId);
   }
 }
