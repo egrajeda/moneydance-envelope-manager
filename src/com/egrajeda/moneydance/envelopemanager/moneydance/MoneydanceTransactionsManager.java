@@ -137,17 +137,38 @@ public class MoneydanceTransactionsManager implements TransactionsManager {
     Account account = accountBook.getAccountByUUID(accountId);
     CurrencyUnit accountCurrency = CurrencyUnit.of(account.getCurrencyType().getIDString());
 
-    return getEnvelopeList(accountId).stream()
-        .filter(envelope -> envelope.getBalance().getCurrencyUnit().equals(accountCurrency))
-        .map(
-            envelope ->
-                new EnvelopeBudget(
-                    envelope.getId(),
-                    envelope.getName(),
-                    BudgetType.PERCENTAGE,
-                    0.05f,
-                    null))
+    return accountBook.getAccountByUUID(accountId).getSubAccounts().stream()
+        .filter(
+            envelope -> {
+              CurrencyUnit envelopeCurrency =
+                  CurrencyUnit.of(envelope.getCurrencyType().getIDString());
+              return envelopeCurrency.equals(accountCurrency);
+            })
+        .map(MoneydanceMapper::toEnvelopeBudget)
         .collect(Collectors.toList());
+  }
+
+  @Override
+  public void saveEnvelopeBudget(EnvelopeBudget envelopeBudget) {
+    Account envelope = accountBook.getAccountByUUID(envelopeBudget.getId());
+
+    envelope.setParameter(
+        MoneydanceMapper.ENVELOPE_BUDGET_TYPE_PARAMETER_KEY, envelopeBudget.getType().name());
+    if (envelopeBudget.getType() == BudgetType.PERCENTAGE) {
+      envelope.setParameter(
+          MoneydanceMapper.ENVELOPE_BUDGET_PERCENTAGE_PARAMETER_KEY,
+          envelopeBudget.getPercentage());
+      envelope.removeParameter(MoneydanceMapper.ENVELOPE_BUDGET_AMOUNT_PARAMETER_KEY);
+    } else if (envelopeBudget.getType() == BudgetType.AMOUNT) {
+      envelope.setParameter(
+          MoneydanceMapper.ENVELOPE_BUDGET_AMOUNT_PARAMETER_KEY,
+          envelopeBudget.getBudget().toString());
+      envelope.removeParameter(MoneydanceMapper.ENVELOPE_BUDGET_PERCENTAGE_PARAMETER_KEY);
+    } else {
+      envelope.removeParameter(MoneydanceMapper.ENVELOPE_BUDGET_PERCENTAGE_PARAMETER_KEY);
+      envelope.removeParameter(MoneydanceMapper.ENVELOPE_BUDGET_AMOUNT_PARAMETER_KEY);
+    }
+    envelope.syncItem();
   }
 
   private EnvelopeReport getEnvelopeReport(Envelope envelope, LocalDate start, LocalDate end) {

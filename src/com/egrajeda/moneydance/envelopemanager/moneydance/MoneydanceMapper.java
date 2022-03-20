@@ -1,9 +1,6 @@
 package com.egrajeda.moneydance.envelopemanager.moneydance;
 
-import com.egrajeda.moneydance.envelopemanager.core.model.Account;
-import com.egrajeda.moneydance.envelopemanager.core.model.ClearedStatus;
-import com.egrajeda.moneydance.envelopemanager.core.model.Envelope;
-import com.egrajeda.moneydance.envelopemanager.core.model.Transaction;
+import com.egrajeda.moneydance.envelopemanager.core.model.*;
 import com.infinitekind.moneydance.model.AbstractTxn;
 import com.infinitekind.moneydance.model.AccountBook;
 import com.infinitekind.moneydance.model.CurrencyType;
@@ -18,6 +15,10 @@ import java.math.RoundingMode;
 public class MoneydanceMapper {
   public static final String ENVELOPE_TRANSACTION_ID_PARAMETER_KEY = "envelopeTransactionId";
   public static final String ORIGINAL_TRANSACTION_ID_PARAMETER_KEY = "originalTransactionId";
+
+  public static final String ENVELOPE_BUDGET_TYPE_PARAMETER_KEY = "envelopeBudgetType";
+  public static final String ENVELOPE_BUDGET_PERCENTAGE_PARAMETER_KEY = "envelopeBudgetPercentage";
+  public static final String ENVELOPE_BUDGET_AMOUNT_PARAMETER_KEY = "envelopeBudgetAmount";
 
   private final AccountBook accountBook;
 
@@ -37,6 +38,17 @@ public class MoneydanceMapper {
         account.getUUID(),
         account.getAccountName(),
         toMoney(account.getBalance(), account.getCurrencyType()));
+  }
+
+  public static EnvelopeBudget toEnvelopeBudget(com.infinitekind.moneydance.model.Account account) {
+    String moneyAsString = account.getParameter(ENVELOPE_BUDGET_AMOUNT_PARAMETER_KEY);
+    return new EnvelopeBudget(
+        account.getUUID(),
+        account.getAccountName(),
+        BudgetType.valueOf(
+            account.getParameter(ENVELOPE_BUDGET_TYPE_PARAMETER_KEY, BudgetType.PERCENTAGE.name())),
+        Float.parseFloat(account.getParameter(ENVELOPE_BUDGET_PERCENTAGE_PARAMETER_KEY, "0")),
+        moneyAsString == null ? null : Money.parse(moneyAsString));
   }
 
   public static Money toMoney(long amount, CurrencyType currencyType) {

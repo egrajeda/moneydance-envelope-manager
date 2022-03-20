@@ -14,7 +14,6 @@ import java.util.Collections;
 import java.util.stream.IntStream;
 
 public class EnvelopesReportTab extends JPanel {
-  private static final Color PANEL_BACKGROUND_COLOR = new Color(211, 236, 248);
   private final TransactionsManager transactionsManager;
   private final EnvelopeReportTableModel envelopeReportTableModel;
   private final JComboBox<Month> monthComboBox;
@@ -75,10 +74,7 @@ public class EnvelopesReportTab extends JPanel {
           setSelectedDate(date);
         });
 
-    JPanel panel = new JPanel();
-    panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
-    panel.setBorder(new EmptyBorder(5, 5, 5, 5));
-    panel.setBackground(PANEL_BACKGROUND_COLOR);
+    TableTopPanel panel = new TableTopPanel();
 
     panel.add(Box.createHorizontalGlue());
     panel.add(previousMonthButton);

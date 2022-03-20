@@ -8,6 +8,7 @@ import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.math.BigDecimal;
@@ -15,6 +16,7 @@ import java.math.RoundingMode;
 import java.util.List;
 
 public class EnvelopesBudgetTab extends JPanel {
+  private static final int ENTIRE_TABLE_WAS_CHANGED = 0;
   private final TransactionsManager transactionsManager;
   private final EnvelopeBudgetTableModel envelopeBudgetTableModel = new EnvelopeBudgetTableModel();
   private final MoneyTableCellEditor moneyTableCellEditor = new MoneyTableCellEditor();
@@ -64,6 +66,29 @@ public class EnvelopesBudgetTab extends JPanel {
         .getColumn(EnvelopeBudgetTableModel.COLUMN_BUDGET_INDEX)
         .setCellEditor(moneyTableCellEditor);
 
+    envelopeBudgetTableModel.addTableModelListener(
+        tableModelEvent -> {
+          if (tableModelEvent.getType() == TableModelEvent.UPDATE) {
+            EnvelopeBudgetTableModel model = (EnvelopeBudgetTableModel) tableModelEvent.getSource();
+            int row = tableModelEvent.getFirstRow();
+            if (row == ENTIRE_TABLE_WAS_CHANGED) {
+              return;
+            }
+
+            EnvelopeBudget envelopeBudget = model.getEnvelopeBudgetAt(row);
+            transactionsManager.saveEnvelopeBudget(envelopeBudget);
+          }
+        });
+
+    JButton applyButton = new JButton("Apply");
+    applyButton.addActionListener(actionEvent -> {});
+
+    TableTopPanel panel = new TableTopPanel();
+
+    panel.add(Box.createHorizontalGlue());
+    panel.add(applyButton);
+
+    add(panel, BorderLayout.PAGE_START);
     add(new JScrollPane(table), BorderLayout.CENTER);
   }
 

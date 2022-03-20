@@ -18,6 +18,7 @@ public class EnvelopeBudgetTableModel extends AbstractTableModel {
     "Envelope", "Income", "Budget Type", "Budget (%)", "Budget"
   };
   private static final int[] COLUMN_WIDTHS = new int[] {450, 100, 100, 100, 100};
+  private static final int ENVELOPE_BUDGET_START_ROW_OFFSET = 2;
   private Money income;
   private List<EnvelopeBudget> envelopeBudgetList = Collections.emptyList();
   private List<EnvelopeBudgetTableRow> envelopeBudgetTableRowList = Collections.emptyList();
@@ -29,6 +30,10 @@ public class EnvelopeBudgetTableModel extends AbstractTableModel {
   public void setEnvelopeBudgetList(List<EnvelopeBudget> envelopeBudgetList) {
     this.envelopeBudgetList = envelopeBudgetList;
     refreshEnvelopeBudgetTableRowList();
+  }
+
+  public EnvelopeBudget getEnvelopeBudgetAt(int rowIndex) {
+    return envelopeBudgetList.get(rowIndex - ENVELOPE_BUDGET_START_ROW_OFFSET);
   }
 
   public void refreshEnvelopeBudgetTableRowList() {
@@ -124,16 +129,19 @@ public class EnvelopeBudgetTableModel extends AbstractTableModel {
         } else {
           envelopeBudget.setType(type);
         }
+        fireTableRowsUpdated(rowIndex, rowIndex);
         refreshEnvelopeBudgetTableRowList();
       }
     } else if (columnIndex == COLUMN_BUDGET_PERCENTAGE_INDEX) {
       if (!Objects.equals(value, row.getPercentage())) {
         envelopeBudget.setPercentage((float) value);
+        fireTableRowsUpdated(rowIndex, rowIndex);
         refreshEnvelopeBudgetTableRowList();
       }
     } else if (columnIndex == COLUMN_BUDGET_INDEX) {
       if (!Objects.equals(value, row.getBudget())) {
         envelopeBudget.setBudget((Money) value);
+        fireTableRowsUpdated(rowIndex, rowIndex);
         refreshEnvelopeBudgetTableRowList();
       }
     } else {

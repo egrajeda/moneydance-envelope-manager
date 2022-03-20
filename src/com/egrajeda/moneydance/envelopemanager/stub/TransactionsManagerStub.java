@@ -115,4 +115,9 @@ public class TransactionsManagerStub implements TransactionsManager {
   public List<EnvelopeBudget> getEnvelopeBudgetList(String accountId) {
     return ENVELOPE_BUDGET_LIST;
   }
+
+  @Override
+  public void saveEnvelopeBudget(EnvelopeBudget envelopeBudget) {
+
+  }
 }

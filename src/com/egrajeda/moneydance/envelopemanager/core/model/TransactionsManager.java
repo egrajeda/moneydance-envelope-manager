@@ -20,4 +20,6 @@ public interface TransactionsManager {
   List<EnvelopeReport> getEnvelopeReportList(String accountId, LocalDate start, LocalDate end);
 
   List<EnvelopeBudget> getEnvelopeBudgetList(String accountId);
+
+  void saveEnvelopeBudget(EnvelopeBudget envelopeBudget);
 }
