@@ -77,7 +77,6 @@ public class EnvelopeManagerWindow extends JFrame {
             if (transaction.getEnvelope() != null) {
               transactionsManager.setEnvelopeOfTransaction(transaction.getEnvelope(), transaction);
             }
-            // Refresh the envelope amounts
             SwingUtilities.invokeLater(this::refreshEnvelopeList);
           }
         });

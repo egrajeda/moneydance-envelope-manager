@@ -18,46 +18,32 @@ public class EnvelopeBudgetTableModel extends AbstractTableModel {
     "Envelope", "Income", "Budget Type", "Budget (%)", "Budget"
   };
   private static final int[] COLUMN_WIDTHS = new int[] {450, 100, 100, 100, 100};
-  private static final int ENVELOPE_BUDGET_START_ROW_OFFSET = 2;
-  private Money income;
-  private List<EnvelopeBudget> envelopeBudgetList = Collections.emptyList();
   private List<EnvelopeBudgetTableRow> envelopeBudgetTableRowList = Collections.emptyList();
 
-  public void setIncome(Money income) {
-    this.income = income;
-  }
-
-  public void setEnvelopeBudgetList(List<EnvelopeBudget> envelopeBudgetList) {
-    this.envelopeBudgetList = envelopeBudgetList;
-    refreshEnvelopeBudgetTableRowList();
-  }
-
-  public EnvelopeBudget getEnvelopeBudgetAt(int rowIndex) {
-    return envelopeBudgetList.get(rowIndex - ENVELOPE_BUDGET_START_ROW_OFFSET);
-  }
-
-  public void refreshEnvelopeBudgetTableRowList() {
-    BudgetPlan budgetPlan = BudgetPlan.calculate(income, envelopeBudgetList);
-
+  public void setBudgetPlan(BudgetPlan budgetPlan) {
     envelopeBudgetTableRowList = new ArrayList<>();
     envelopeBudgetTableRowList.add(
-        EnvelopeBudgetTableRow.fromIncome("Income", budgetPlan.getAmount()));
+            EnvelopeBudgetTableRow.fromIncome("Income", budgetPlan.getAmount()));
     envelopeBudgetTableRowList.add(EnvelopeBudgetTableRow.empty());
 
     envelopeBudgetTableRowList.addAll(
-        budgetPlan.getItemList().stream()
-            .map(
-                item ->
-                    EnvelopeBudgetTableRow.fromEnvelopeBudget(
-                        item.getEnvelopeBudget(), item.getPercentage(), item.getAmount()))
-            .sorted(Comparator.comparing(EnvelopeBudgetTableRow::getName))
-            .toList());
+            budgetPlan.getItemList().stream()
+                    .map(
+                            item ->
+                                    EnvelopeBudgetTableRow.fromEnvelopeBudget(
+                                            item.getEnvelopeBudget(), item.getPercentage(), item.getAmount()))
+                    .sorted(Comparator.comparing(EnvelopeBudgetTableRow::getName))
+                    .toList());
 
     envelopeBudgetTableRowList.add(EnvelopeBudgetTableRow.empty());
     envelopeBudgetTableRowList.add(
-        EnvelopeBudgetTableRow.fromIncome("Balance", budgetPlan.getLeftover()));
+            EnvelopeBudgetTableRow.fromIncome("Balance", budgetPlan.getLeftover()));
 
     fireTableDataChanged();
+  }
+
+  public EnvelopeBudget getEnvelopeBudgetAt(int rowIndex) {
+    return envelopeBudgetTableRowList.get(rowIndex).getEnvelopeBudget();
   }
 
   @Override
@@ -130,19 +116,16 @@ public class EnvelopeBudgetTableModel extends AbstractTableModel {
           envelopeBudget.setType(type);
         }
         fireTableRowsUpdated(rowIndex, rowIndex);
-        refreshEnvelopeBudgetTableRowList();
       }
     } else if (columnIndex == COLUMN_BUDGET_PERCENTAGE_INDEX) {
       if (!Objects.equals(value, row.getPercentage())) {
         envelopeBudget.setPercentage((float) value);
         fireTableRowsUpdated(rowIndex, rowIndex);
-        refreshEnvelopeBudgetTableRowList();
       }
     } else if (columnIndex == COLUMN_BUDGET_INDEX) {
       if (!Objects.equals(value, row.getBudget())) {
         envelopeBudget.setBudget((Money) value);
         fireTableRowsUpdated(rowIndex, rowIndex);
-        refreshEnvelopeBudgetTableRowList();
       }
     } else {
       throw new IllegalStateException("Unexpected value: " + columnIndex);

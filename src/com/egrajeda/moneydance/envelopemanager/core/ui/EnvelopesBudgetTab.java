@@ -1,9 +1,6 @@
 package com.egrajeda.moneydance.envelopemanager.core.ui;
 
-import com.egrajeda.moneydance.envelopemanager.core.model.Account;
-import com.egrajeda.moneydance.envelopemanager.core.model.BudgetType;
-import com.egrajeda.moneydance.envelopemanager.core.model.EnvelopeBudget;
-import com.egrajeda.moneydance.envelopemanager.core.model.TransactionsManager;
+import com.egrajeda.moneydance.envelopemanager.core.model.*;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 
@@ -11,8 +8,6 @@ import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 
 public class EnvelopesBudgetTab extends JPanel {
@@ -21,6 +16,7 @@ public class EnvelopesBudgetTab extends JPanel {
   private final EnvelopeBudgetTableModel envelopeBudgetTableModel = new EnvelopeBudgetTableModel();
   private final MoneyTableCellEditor moneyTableCellEditor = new MoneyTableCellEditor();
   private String accountId;
+  private BudgetPlan budgetPlan;
 
   public EnvelopesBudgetTab(TransactionsManager transactionsManager) {
     super(new BorderLayout());
@@ -77,16 +73,30 @@ public class EnvelopesBudgetTab extends JPanel {
 
             EnvelopeBudget envelopeBudget = model.getEnvelopeBudgetAt(row);
             transactionsManager.saveEnvelopeBudget(envelopeBudget);
+            SwingUtilities.invokeLater(this::refreshEnvelopeBudgetList);
           }
         });
 
-    JButton applyButton = new JButton("Apply");
-    applyButton.addActionListener(actionEvent -> {});
+    JButton assignButton = new JButton("Assign");
+    assignButton.addActionListener(
+        actionEvent -> {
+          int result = JOptionPane.showConfirmDialog(
+                  this,
+                  "A new transaction will be created per envelope to transfer the amount specified from the main account.\nAre you sure you want to continue?",
+                  "Assign Budget?",
+                  JOptionPane.YES_NO_OPTION,
+                  JOptionPane.QUESTION_MESSAGE);
+          if (result != JOptionPane.YES_OPTION) {
+            return;
+          }
+
+
+        });
 
     TableTopPanel panel = new TableTopPanel();
 
     panel.add(Box.createHorizontalGlue());
-    panel.add(applyButton);
+    panel.add(assignButton);
 
     add(panel, BorderLayout.PAGE_START);
     add(new JScrollPane(table), BorderLayout.CENTER);
@@ -107,9 +117,8 @@ public class EnvelopesBudgetTab extends JPanel {
     Money income = account.getBalance();
     List<EnvelopeBudget> envelopeBudgetList = transactionsManager.getEnvelopeBudgetList(accountId);
 
-    envelopeBudgetTableModel.setIncome(income);
-    envelopeBudgetTableModel.setEnvelopeBudgetList(envelopeBudgetList);
-
+    budgetPlan = BudgetPlan.calculate(income, envelopeBudgetList);
+    envelopeBudgetTableModel.setBudgetPlan(budgetPlan);
     moneyTableCellEditor.setCurrency(currency);
   }
 }
