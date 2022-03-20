@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class MoneydanceTransactionsManager implements TransactionsManager {
-  private static final String ENVELOPE_TRANSACTION_CHECK_NUMBER = "Ignore";
   private static final String ENVELOPE_ADJUSTMENT_TRANSACTION_TAG = "overspend";
 
   private final AccountBook accountBook;
@@ -68,31 +67,18 @@ public class MoneydanceTransactionsManager implements TransactionsManager {
     ParentTxn parentTxn = getParentTxn(transaction.getId());
     Account envelopeAccount = accountBook.getAccountByUUID(envelope.getId());
 
-    ParentTxn newParentTxn = new ParentTxn(accountBook);
-    newParentTxn.setDateInt(parentTxn.getDateInt());
-    newParentTxn.setTaxDateInt(parentTxn.getDateInt());
-    newParentTxn.setCheckNumber(ENVELOPE_TRANSACTION_CHECK_NUMBER);
-    newParentTxn.setAccount(parentTxn.getAccount());
-    newParentTxn.setCheckNumber("Ignore");
-    newParentTxn.setDescription(
-        "Transfer to cover ["
-            + parentTxn.getDescription()
-            + "] under ["
-            + TransactionUtils.getCategoryName(parentTxn)
-            + "]");
-    newParentTxn.setClearedStatus(AbstractTxn.ClearedStatus.RECONCILING);
-    newParentTxn.setParameter(
-        MoneydanceMapper.ORIGINAL_TRANSACTION_ID_PARAMETER_KEY, parentTxn.getUUID());
-
-    SplitTxn newSplitTxn = new SplitTxn(newParentTxn);
-    newSplitTxn.setAccount(envelopeAccount);
-    newSplitTxn.setCheckNumber(ENVELOPE_TRANSACTION_CHECK_NUMBER);
-    newSplitTxn.setAmount(parentTxn.getValue(), parentTxn.getValue());
-    newSplitTxn.setDescription(newParentTxn.getDescription());
-    newSplitTxn.setClearedStatus(AbstractTxn.ClearedStatus.RECONCILING);
-
-    newParentTxn.addSplit(newSplitTxn);
-    newParentTxn.syncItem();
+    ParentTxn newParentTxn =
+        TransactionUtils.createParentAndSplitTxn(
+            accountBook,
+            parentTxn.getDateInt(),
+            parentTxn.getAccount(),
+            envelopeAccount,
+            "Transfer to cover ["
+                + parentTxn.getDescription()
+                + "] under ["
+                + TransactionUtils.getCategoryName(parentTxn)
+                + "]",
+            parentTxn.getValue());
 
     parentTxn.setClearedStatus(AbstractTxn.ClearedStatus.RECONCILING);
     parentTxn.setParameter(
@@ -169,6 +155,26 @@ public class MoneydanceTransactionsManager implements TransactionsManager {
       envelope.removeParameter(MoneydanceMapper.ENVELOPE_BUDGET_AMOUNT_PARAMETER_KEY);
     }
     envelope.syncItem();
+  }
+
+  @Override
+  public void assignBudgetPlan(BudgetPlan budgetPlan) {
+    for (BudgetPlanItem item : budgetPlan.getItemList()) {
+      if (item.getAmount().isNegativeOrZero()) {
+        continue;
+      }
+
+      Account envelope = accountBook.getAccountByUUID(item.getEnvelopeBudget().getId());
+      TransactionUtils.createParentAndSplitTxn(
+          accountBook,
+          LocalDateUtils.nowAsInt(),
+          envelope.getParentAccount(),
+          envelope,
+          "Budget assignment for [" + envelope.getAccountName() + "]",
+          item.getAmount().getAmountMinorLong());
+    }
+
+    accountBook.refreshAccountBalances();
   }
 
   private EnvelopeReport getEnvelopeReport(Envelope envelope, LocalDate start, LocalDate end) {

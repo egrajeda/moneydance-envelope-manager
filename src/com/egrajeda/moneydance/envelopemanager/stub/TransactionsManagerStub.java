@@ -120,4 +120,9 @@ public class TransactionsManagerStub implements TransactionsManager {
   public void saveEnvelopeBudget(EnvelopeBudget envelopeBudget) {
 
   }
+
+  @Override
+  public void assignBudgetPlan(BudgetPlan budgetPlan) {
+
+  }
 }

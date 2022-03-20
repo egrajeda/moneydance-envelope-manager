@@ -22,4 +22,6 @@ public interface TransactionsManager {
   List<EnvelopeBudget> getEnvelopeBudgetList(String accountId);
 
   void saveEnvelopeBudget(EnvelopeBudget envelopeBudget);
+
+  void assignBudgetPlan(BudgetPlan budgetPlan);
 }

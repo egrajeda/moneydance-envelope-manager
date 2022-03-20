@@ -16,6 +16,10 @@ public class LocalDateUtils {
     return DateUtil.convertDateToInt(convertLocalDateToDate(localDate));
   }
 
+  public static int nowAsInt() {
+    return convertLocalDateToInt(LocalDate.now());
+  }
+
   private static Date convertLocalDateToDate(LocalDate localDate) {
     return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
   }

@@ -80,17 +80,16 @@ public class EnvelopesBudgetTab extends JPanel {
     JButton assignButton = new JButton("Assign");
     assignButton.addActionListener(
         actionEvent -> {
-          int result = JOptionPane.showConfirmDialog(
+          int result =
+              JOptionPane.showConfirmDialog(
                   this,
                   "A new transaction will be created per envelope to transfer the amount specified from the main account.\nAre you sure you want to continue?",
                   "Assign Budget?",
                   JOptionPane.YES_NO_OPTION,
                   JOptionPane.QUESTION_MESSAGE);
-          if (result != JOptionPane.YES_OPTION) {
-            return;
+          if (result == JOptionPane.YES_OPTION) {
+            transactionsManager.assignBudgetPlan(budgetPlan);
           }
-
-
         });
 
     TableTopPanel panel = new TableTopPanel();
