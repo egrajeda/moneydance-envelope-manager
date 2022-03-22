@@ -7,13 +7,18 @@ System. It has been designed to work with Philip Stratton explanation of the sys
 
 ## Features
 
-* **Move money from envelopes to cover for uncleared expenses.** The extension will assist with the creation of
+* **Budget by moving money to the envelopes.** Budget an amount or a percentage for each envelope. Once you're comfortable
+  with the entire budget, ask the extension to distribute the money by creating the appropriate transactions.
+  
+* **Cover for uncleared expenses by moving money from the envelopes.** The extension will assist with the creation of
   transactions to represent the movement of money from an envelope to the main account. The auto-generated transaction
   will have the right values, and it'll also be linked to the original expense through metadata.
+  
+* **Visualize the overview of each month.** Keep an eye on how much you budgeted for each envelope and how much you spent.
 
 ## Installation
 
-1. Either [build the source code](#build) or [download the latest release](https://github.com/egrajeda/moneydance-envelope-manager/releases).
+1. Either [build the source code](#build) or [download the latest release](https://github.com/egrajeda/moneydance-envelope-manager/releases/latest).
 
 2. Follow [Moneydance's official documentation to install extensions](https://help.infinitekind.com/support/solutions/articles/80000682003-installing-extensions).
 
