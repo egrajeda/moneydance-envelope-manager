@@ -16,7 +16,7 @@ System. It has been designed to work with Philip Stratton explanation of the sys
   
 * **Visualize the overview of each month.** Keep an eye on how much you budgeted for each envelope and how much you spent.
 
-<a href="https://user-images.githubusercontent.com/12800/159573450-a140027a-ebc4-409e-acd3-ae3a51ae07c5.png"><img src="https://user-images.githubusercontent.com/12800/159573450-a140027a-ebc4-409e-acd3-ae3a51ae07c5.png" width="300" /></a> <a href="https://user-images.githubusercontent.com/12800/159573639-fba80ee7-b2cc-4ac4-955c-11db2424b099.png"><img src="https://user-images.githubusercontent.com/12800/159573639-fba80ee7-b2cc-4ac4-955c-11db2424b099.png" width="300" /></a> <a href="https://user-images.githubusercontent.com/12800/159573771-a2f17345-21c1-478f-b0e2-94d423df3bae.png"><img src="https://user-images.githubusercontent.com/12800/159573771-a2f17345-21c1-478f-b0e2-94d423df3bae.png" width="300" /></a>
+<a href="https://user-images.githubusercontent.com/12800/159573450-a140027a-ebc4-409e-acd3-ae3a51ae07c5.png"><img src="https://user-images.githubusercontent.com/12800/159573450-a140027a-ebc4-409e-acd3-ae3a51ae07c5.png" width="270" /></a> <a href="https://user-images.githubusercontent.com/12800/159573639-fba80ee7-b2cc-4ac4-955c-11db2424b099.png"><img src="https://user-images.githubusercontent.com/12800/159573639-fba80ee7-b2cc-4ac4-955c-11db2424b099.png" width="270" /></a> <a href="https://user-images.githubusercontent.com/12800/159573771-a2f17345-21c1-478f-b0e2-94d423df3bae.png"><img src="https://user-images.githubusercontent.com/12800/159573771-a2f17345-21c1-478f-b0e2-94d423df3bae.png" width="270" /></a>
 
 ## Installation
 
