@@ -26,7 +26,16 @@ public class MoneydanceTransactionsManager implements TransactionsManager {
 
   @Override
   public com.egrajeda.moneydance.envelopemanager.core.model.Account getAccount(String accountId) {
-    return MoneydanceMapper.toAccount(accountBook.getAccountByUUID(accountId));
+    if (accountId == null) {
+      return null;
+    }
+
+    Account account = accountBook.getAccountByUUID(accountId);
+    if (account == null) {
+      return null;
+    }
+
+    return MoneydanceMapper.toAccount(account);
   }
 
   @Override

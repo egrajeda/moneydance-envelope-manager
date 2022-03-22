@@ -122,14 +122,18 @@ public class EnvelopeManagerWindow extends JFrame {
 
     panel.add(tabbedPane, BorderLayout.CENTER);
 
-    Account account =
+    String selectedAccountId =
         userPreferences.getSelectedAccountId() == null
+            ? transactionsManager.getAccountList().get(0).getId()
+            : userPreferences.getSelectedAccountId();
+    Account selectedAccount =
+        transactionsManager.getAccount(selectedAccountId) == null
             ? transactionsManager.getAccountList().get(0)
-            : transactionsManager.getAccount(userPreferences.getSelectedAccountId());
-    if (Objects.equals(accountComboBox.getSelectedItem(), account)) {
-      onAccountSelected(account.getId());
+            : transactionsManager.getAccount(selectedAccountId);
+    if (Objects.equals(accountComboBox.getSelectedItem(), selectedAccount)) {
+      onAccountSelected(selectedAccount.getId());
     } else {
-      accountComboBox.setSelectedItem(account);
+      accountComboBox.setSelectedItem(selectedAccount);
     }
 
     add(panel);
