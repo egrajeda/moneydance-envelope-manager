@@ -1,6 +1,6 @@
 {
   "vendor" = "Eduardo Grajeda"
-  "module_build" = "1"
+  "module_build" = "101"
   "minbuild" = "1000"
   "vendor.url" = "https://egrajeda.com"
   "module_name" = "Envelope Manager"
