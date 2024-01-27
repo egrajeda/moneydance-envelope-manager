@@ -6,6 +6,7 @@ import com.infinitekind.moneydance.model.AccountBook;
 import com.infinitekind.moneydance.model.CurrencyType;
 import com.infinitekind.moneydance.model.ParentTxn;
 import com.infinitekind.util.DateUtil;
+import com.infinitekind.util.StringUtils;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 
@@ -89,6 +90,9 @@ public class MoneydanceMapper {
 
   private Envelope getEnvelopeIfPresent(ParentTxn parentTxn) {
     String envelopeTransactionId = parentTxn.getParameter(ENVELOPE_TRANSACTION_ID_PARAMETER_KEY);
+    if (StringUtils.isEmpty(envelopeTransactionId)) {
+      return null;
+    }
     AbstractTxn envelopeTransaction =
         accountBook.getTransactionSet().getTxnByID(envelopeTransactionId);
     if (!(envelopeTransaction instanceof ParentTxn)) {
