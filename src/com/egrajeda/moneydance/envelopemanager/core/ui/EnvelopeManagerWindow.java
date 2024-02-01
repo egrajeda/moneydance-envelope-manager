@@ -90,15 +90,16 @@ public class EnvelopeManagerWindow extends JFrame {
     subPanel0.setLayout(new BoxLayout(subPanel0, BoxLayout.LINE_AXIS));
     subPanel0.setBorder(new EmptyBorder(5, 5, 5, 5));
 
+    subPanel0.add(new JLabel("Account:"));
+
     JComboBox<Account> accountComboBox =
         new JComboBox<>(transactionsManager.getAccountList().toArray(new Account[0]));
     accountComboBox.addItemListener(
         itemEvent -> onAccountSelected(((Account) itemEvent.getItem()).getId()));
     accountComboBox.setMaximumSize(accountComboBox.getPreferredSize());
-
-    subPanel0.add(new JLabel("Account:"));
     subPanel0.add(Box.createHorizontalStrut(5));
     subPanel0.add(accountComboBox);
+
     subPanel0.add(Box.createHorizontalGlue());
 
     JButton refreshButton = new JButton("Refresh");
@@ -108,6 +109,12 @@ public class EnvelopeManagerWindow extends JFrame {
           refreshEnvelopeList();
         });
     subPanel0.add(refreshButton);
+
+    JButton settingsButton = new JButton("Settings");
+    settingsButton.addActionListener(
+        actionEvent -> new SettingsWindow(transactionsManager, userPreferences).setVisible(true));
+    subPanel0.add(Box.createHorizontalStrut(5));
+    subPanel0.add(settingsButton);
 
     panel.add(subPanel0, BorderLayout.PAGE_START);
 
@@ -124,11 +131,11 @@ public class EnvelopeManagerWindow extends JFrame {
 
     String selectedAccountId =
         userPreferences.getSelectedAccountId() == null
-            ? transactionsManager.getAccountList().get(0).getId()
+            ? transactionsManager.getAccountList().getFirst().getId()
             : userPreferences.getSelectedAccountId();
     Account selectedAccount =
         transactionsManager.getAccount(selectedAccountId) == null
-            ? transactionsManager.getAccountList().get(0)
+            ? transactionsManager.getAccountList().getFirst()
             : transactionsManager.getAccount(selectedAccountId);
     if (Objects.equals(accountComboBox.getSelectedItem(), selectedAccount)) {
       onAccountSelected(selectedAccount.getId());

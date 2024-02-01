@@ -47,6 +47,20 @@ public class MoneydanceTransactionsManager implements TransactionsManager {
   }
 
   @Override
+  public Envelope getEnvelope(String envelopeId) {
+    if (envelopeId == null) {
+      return null;
+    }
+
+    Account account = accountBook.getAccountByUUID(envelopeId);
+    if (account == null) {
+      return null;
+    }
+
+    return MoneydanceMapper.toEnvelope(account);
+  }
+
+  @Override
   public List<Envelope> getEnvelopeList(String accountId) {
     return accountBook.getAccountByUUID(accountId).getSubAccounts().stream()
         .map(MoneydanceMapper::toEnvelope)

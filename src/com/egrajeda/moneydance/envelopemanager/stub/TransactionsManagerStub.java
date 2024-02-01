@@ -54,7 +54,7 @@ public class TransactionsManagerStub implements TransactionsManager {
                       "Personal:Sporting Goods",
                       ClearedStatus.RECONCILING,
                       Money.parse("EUR 499.99"),
-                      ENVELOPE_LIST.get(0)),
+                      ENVELOPE_LIST.getFirst()),
                   new Transaction(
                       UUID.randomUUID().toString(),
                       DateUtils.create(2021, 12, 11),
@@ -81,12 +81,17 @@ public class TransactionsManagerStub implements TransactionsManager {
 
   @Override
   public Account getAccount(String accountId) {
-    return ACCOUNT_LIST.get(0);
+    return ACCOUNT_LIST.getFirst();
   }
 
   @Override
   public List<Account> getAccountList() {
     return ACCOUNT_LIST;
+  }
+
+  @Override
+  public Envelope getEnvelope(String envelopeId) {
+    return ENVELOPE_LIST.getFirst();
   }
 
   @Override
@@ -117,12 +122,8 @@ public class TransactionsManagerStub implements TransactionsManager {
   }
 
   @Override
-  public void saveEnvelopeBudget(EnvelopeBudget envelopeBudget) {
-
-  }
+  public void saveEnvelopeBudget(EnvelopeBudget envelopeBudget) {}
 
   @Override
-  public void assignBudgetPlan(BudgetPlan budgetPlan) {
-
-  }
+  public void assignBudgetPlan(BudgetPlan budgetPlan) {}
 }

@@ -1,13 +1,14 @@
 package com.egrajeda.moneydance.envelopemanager.core.model;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 public interface TransactionsManager {
   Account getAccount(String accountId);
 
   List<Account> getAccountList();
+
+  Envelope getEnvelope(String envelopeId);
 
   List<Envelope> getEnvelopeList(String accountId);
 

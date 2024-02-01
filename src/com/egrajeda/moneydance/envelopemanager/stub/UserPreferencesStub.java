@@ -9,10 +9,26 @@ public class UserPreferencesStub implements UserPreferences {
   }
 
   @Override
+  public void setSelectedAccountId(String accountId) {}
+
+  @Override
   public String getSelectedAccountId() {
     return null;
   }
 
   @Override
-  public void setSelectedAccountId(String accountId) {}
+  public void setMainAccountId(String accountId) {}
+
+  @Override
+  public String getMainAccountId() {
+    return null;
+  }
+
+  @Override
+  public void setSavingsEnvelopeId(String envelopeId) {}
+
+  @Override
+  public String getSavingsEnvelopeId() {
+    return null;
+  }
 }
