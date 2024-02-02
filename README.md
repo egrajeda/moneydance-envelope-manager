@@ -54,7 +54,13 @@ curl -O https://github.com/JodaOrg/joda-money/releases/download/v1.0.1/joda-mone
 ant genkeys
 ```
 
-4. Build the extension from `src/`:
+4. Build the extension:
+
+```shell
+make
+```
+
+Or run from `src/`
 
 ```shell
 ant envelopemanager
