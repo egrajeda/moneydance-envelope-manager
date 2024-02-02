@@ -97,7 +97,7 @@ public class EnvelopeManagerWindow extends JFrame {
     accountComboBox.addItemListener(
         itemEvent -> onAccountSelected(((Account) itemEvent.getItem()).getId()));
     accountComboBox.setMaximumSize(accountComboBox.getPreferredSize());
-    subPanel0.add(Box.createHorizontalStrut(5));
+    subPanel0.add(Box.createRigidArea(new Dimension(5, 0)));
     subPanel0.add(accountComboBox);
 
     subPanel0.add(Box.createHorizontalGlue());
@@ -113,7 +113,7 @@ public class EnvelopeManagerWindow extends JFrame {
     JButton settingsButton = new JButton("Settings");
     settingsButton.addActionListener(
         actionEvent -> new SettingsWindow(transactionsManager, userPreferences).setVisible(true));
-    subPanel0.add(Box.createHorizontalStrut(5));
+    subPanel0.add(Box.createRigidArea(new Dimension(5, 0)));
     subPanel0.add(settingsButton);
 
     panel.add(subPanel0, BorderLayout.PAGE_START);

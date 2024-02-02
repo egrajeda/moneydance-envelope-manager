@@ -78,11 +78,11 @@ public class EnvelopesReportTab extends JPanel {
 
     panel.add(Box.createHorizontalGlue());
     panel.add(previousMonthButton);
-    panel.add(Box.createHorizontalStrut(10));
+    panel.add(Box.createRigidArea(new Dimension(10, 0)));
     panel.add(monthComboBox);
-    panel.add(Box.createHorizontalStrut(10));
+    panel.add(Box.createRigidArea(new Dimension(10, 0)));
     panel.add(yearComboBox);
-    panel.add(Box.createHorizontalStrut(10));
+    panel.add(Box.createRigidArea(new Dimension(10, 0)));
     panel.add(nextMonthButton);
     panel.add(Box.createHorizontalGlue());
 
